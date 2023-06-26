@@ -322,7 +322,9 @@ export default {
     };
   },
   methods: {
+    /* Agrega una habitación al hotel */
     AgregarHabitacion() {
+      /* Validaciones */
       this.validaciones_habitaciones.tipo_habitacion = !this.habitacion
         .tipo_habitacion
         ? "El tipo de habitación es obligatorio"
@@ -347,10 +349,13 @@ export default {
             "La cantidad debe ser mayor a 0";
         }
       }
+      /* Si hay validaciones, no se agrega la habitación */
       if (this.validaciones_habitaciones.length != 0) {
         return;
       } else {
+        /* Se suma la cantidad de habitaciones para calcular el total de habitaciones disponibles */
         this.total += parseInt(this.habitacion.cantidad_habitaciones);
+        /* Se agrega la habitación */
         this.hotel.habitaciones.push({
           tipo_habitacion: this.tipo_habitaciones.find(
             (tipo_habitacion) =>
@@ -363,6 +368,7 @@ export default {
           ).nombre,
           cantidad_habitaciones: this.habitacion.cantidad_habitaciones,
         });
+        /* Se limpia el formulario */
         this.habitacion = {
           tipo_habitacion: "",
           acomodacion: "",
@@ -370,7 +376,9 @@ export default {
         };
       }
     },
+    /* Elimina una habitación del hotel */
     EliminarHabitacion(habitacion) {
+      /* Se resta la cantidad de habitaciones para calcular el total de habitaciones disponibles */
       this.total -=
         this.hotel.habitaciones.indexOf(habitacion).cantidad_habitaciones;
       this.hotel.habitaciones.splice(
@@ -378,6 +386,7 @@ export default {
         1
       );
     },
+    /* Obtiene las acomodaciones para el select */
     ObtenerAcomodaciones() {
       axios
         .get(this.url + "acomodaciones/" + this.habitacion.tipo_habitacion)
@@ -385,10 +394,12 @@ export default {
           this.acomodaciones = response.data;
         });
     },
+    /* Obtiene el hotel */
     ObtenerHotel() {
       axios.get(this.url + "hoteles/" + this.id).then((response) => {
         this.hotel = response.data.hoteles;
         this.hotel.habitaciones = this.hotel.habitaciones.map((habitacion) => {
+          /* Se suma la cantidad de habitaciones para calcular el total de habitaciones disponibles */
           this.total += parseInt(habitacion.cantidad_habitaciones);
           return {
             tipo_habitacion:
@@ -403,6 +414,7 @@ export default {
       });
     },
     Validaciones() {
+      /*Validacions del formulario  de registro tributario*/
       this.validaciones = [];
       this.validaciones.nit = !this.hotel.nit ? "El nit es obligatorio" : null;
       this.validaciones.nombre = !this.hotel.nombre
@@ -423,10 +435,13 @@ export default {
         : null;
     },
     Registro() {
+      /* Validaciones */
       this.Validaciones();
+      /* Si hay validaciones, no se registra el hotel */
       if (this.validaciones.length != 0) {
         return;
       } else {
+        /* Si no hay id, se registra el hotel, de lo contrario se actualiza */
         if (this.titulo == "Nuevo hotel") {
           this.Registrar();
         } else {
@@ -435,6 +450,7 @@ export default {
       }
     },
     Registrar() {
+      /* Se registra el hotel */
       axios
         .post(this.url + "hoteles", this.hotel)
         .then((response) => {
@@ -444,7 +460,9 @@ export default {
             showConfirmButton: false,
             timer: 1500,
           });
+          /* Se actualiza la tabla inicial de los hoteles*/
           this.$emit("actualizar");
+          /* Se cierra el modal */
           $("#formularioModal").removeClass("in");
           $(".modal-backdrop").remove();
           $("#formularioModal").hide();
@@ -454,6 +472,7 @@ export default {
         });
     },
     Actualizar() {
+      /* Se actualiza el hotel */
       axios
         .put(this.url + "hoteles/" + this.id, this.hotel)
         .then((response) => {
@@ -463,8 +482,9 @@ export default {
             showConfirmButton: false,
             timer: 1500,
           });
-
+          /* Se actualiza la tabla inicial de los hoteles*/
           this.$emit("actualizar");
+          /* Se cierra el modal */
           $("#formularioModal").removeClass("in");
           $(".modal-backdrop").remove();
           $("#formularioModal").hide();
