@@ -10,7 +10,9 @@
     >
       Nuevo Hotel
     </button>
-    <table ref="tabla_hoteles" class="display responsive nowrap"></table>
+    <div class="table-responsive">
+      <table ref="tabla_hoteles" class="display responsive nowrap"></table>
+    </div>
   </div>
   <DetallesHotel :id="id" />
   <FormularioHotel
